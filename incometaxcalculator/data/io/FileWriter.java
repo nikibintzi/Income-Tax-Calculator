@@ -9,59 +9,104 @@ import incometaxcalculator.data.management.TaxpayerManager;
 
 public abstract class FileWriter {
 
+ 
+  private TaxpayerManager taxpayerManager;
+  
+  public FileWriter(TaxpayerManager newTaxpayerManager) {
+    taxpayerManager = newTaxpayerManager;
+  }
+  
   public abstract void generateFile(int taxRegistrationNumber) throws IOException;
 
+  public TaxpayerManager getTaxpayerManager() {
+    //TaxpayerManager manager = new TaxpayerManager();
+    return taxpayerManager;
+  }
+  
+  /*
+   * public Taxpayer getTaxpayer(int taxRegistrationNumber) { TaxpayerManager manager = new
+   * TaxpayerManager(); return manager.getTaxpayer(taxRegistrationNumber); }
+   * 
+   * public String getTaxpayerName(int taxRegistrationNumber) { TaxpayerManager manager = new
+   * TaxpayerManager(); return manager.getTaxpayerName(taxRegistrationNumber); }
+   * 
+   * public String getTaxpayerIncome(int taxRegistrationNumber) { TaxpayerManager manager = new
+   * TaxpayerManager(); return manager.getTaxpayerIncome(taxRegistrationNumber); }
+   * 
+   * public String getTaxpayerStatus(int taxRegistrationNumber) { TaxpayerManager manager = new
+   * TaxpayerManager(); return manager.getTaxpayerStatus(taxRegistrationNumber); }
+   * 
+   * public double getTaxpayerVariationTaxOnReceipts(int taxRegistrationNumber) { TaxpayerManager
+   * manager = new TaxpayerManager(); return
+   * manager.getTaxpayerVariationTaxOnReceipts(taxRegistrationNumber); }
+   * 
+   * public int getTaxpayerTotalReceiptsGathered(int taxRegistrationNumber) { TaxpayerManager
+   * manager = new TaxpayerManager(); return
+   * manager.getTaxpayerTotalReceiptsGathered(taxRegistrationNumber); }
+   * 
+   * public float getTaxpayerAmountOfReceiptKind(int taxRegistrationNumber, short kind) {
+   * TaxpayerManager manager = new TaxpayerManager(); return
+   * manager.getTaxpayerAmountOfReceiptKind(taxRegistrationNumber, kind); }
+   * 
+   * public double getTaxpayerTotalTax(int taxRegistrationNumber) { TaxpayerManager manager = new
+   * TaxpayerManager(); return manager.getTaxpayerTotalTax(taxRegistrationNumber); }
+   * 
+   * public double getTaxpayerBasicTax(int taxRegistrationNumber) { TaxpayerManager manager = new
+   * TaxpayerManager(); return manager.getTaxpayerBasicTax(taxRegistrationNumber); }
+   * 
+   * public HashMap<Integer, Receipt> getReceiptHashMap(int taxRegistrationNumber) { TaxpayerManager
+   * manager = new TaxpayerManager(); return manager.getReceiptHashMap(taxRegistrationNumber); }
+   */
+
   public Taxpayer getTaxpayer(int taxRegistrationNumber) {
-    TaxpayerManager manager = new TaxpayerManager();
-    return manager.getTaxpayer(taxRegistrationNumber);
+    return taxpayerManager.getTaxpayer(taxRegistrationNumber);
   }
 
   public String getTaxpayerName(int taxRegistrationNumber) {
-    TaxpayerManager manager = new TaxpayerManager();
-    return manager.getTaxpayerName(taxRegistrationNumber);
+    //TaxpayerManager manager = new TaxpayerManager();
+    return taxpayerManager.getTaxpayerName(taxRegistrationNumber);
   }
 
   public String getTaxpayerIncome(int taxRegistrationNumber) {
-    TaxpayerManager manager = new TaxpayerManager();
-    return manager.getTaxpayerIncome(taxRegistrationNumber);
+    //TaxpayerManager manager = new TaxpayerManager();
+    return taxpayerManager.getTaxpayerIncome(taxRegistrationNumber);
   }
 
   public String getTaxpayerStatus(int taxRegistrationNumber) {
-    TaxpayerManager manager = new TaxpayerManager();
-    return manager.getTaxpayerStatus(taxRegistrationNumber);
+    //TaxpayerManager manager = new TaxpayerManager();
+    return taxpayerManager.getTaxpayerStatus(taxRegistrationNumber);
   }
 
   public double getTaxpayerVariationTaxOnReceipts(int taxRegistrationNumber) {
-    TaxpayerManager manager = new TaxpayerManager();
-    return manager.getTaxpayerVariationTaxOnReceipts(taxRegistrationNumber);
+    //TaxpayerManager manager = new TaxpayerManager();
+    return taxpayerManager.getTaxpayerVariationTaxOnReceipts(taxRegistrationNumber);
   }
 
   public int getTaxpayerTotalReceiptsGathered(int taxRegistrationNumber) {
-    TaxpayerManager manager = new TaxpayerManager();
-    return manager.getTaxpayerTotalReceiptsGathered(taxRegistrationNumber);
+    //TaxpayerManager manager = new TaxpayerManager();
+    return taxpayerManager.getTaxpayerTotalReceiptsGathered(taxRegistrationNumber);
   }
 
   public float getTaxpayerAmountOfReceiptKind(int taxRegistrationNumber, short kind) {
-    TaxpayerManager manager = new TaxpayerManager();
-    return manager.getTaxpayerAmountOfReceiptKind(taxRegistrationNumber, kind);
+    //TaxpayerManager manager = new TaxpayerManager();
+    return taxpayerManager.getTaxpayerAmountOfReceiptKind(taxRegistrationNumber, kind);
   }
 
   public double getTaxpayerTotalTax(int taxRegistrationNumber) {
-    TaxpayerManager manager = new TaxpayerManager();
-    return manager.getTaxpayerTotalTax(taxRegistrationNumber);
+    //TaxpayerManager manager = new TaxpayerManager();
+    return taxpayerManager.getTaxpayerTotalTax(taxRegistrationNumber);
   }
 
   public double getTaxpayerBasicTax(int taxRegistrationNumber) {
-    TaxpayerManager manager = new TaxpayerManager();
-    return manager.getTaxpayerBasicTax(taxRegistrationNumber);
+    //TaxpayerManager manager = new TaxpayerManager();
+    return taxpayerManager.getTaxpayerBasicTax(taxRegistrationNumber);
   }
 
   public HashMap<Integer, Receipt> getReceiptHashMap(int taxRegistrationNumber) {
-    TaxpayerManager manager = new TaxpayerManager();
-    return manager.getReceiptHashMap(taxRegistrationNumber);
+    //TaxpayerManager manager = new TaxpayerManager();
+    return taxpayerManager.getReceiptHashMap(taxRegistrationNumber);
   }
-
-  public int getReceiptId(Receipt receipt) {
+  /*public int getReceiptId(Receipt receipt) {
     return receipt.getId();
   }
 
@@ -75,26 +120,20 @@ public abstract class FileWriter {
 
   public float getReceiptAmount(Receipt receipt) {
     return receipt.getAmount();
-  }
+  }*/
 
-  public String getCompanyName(Receipt receipt) {
-    return receipt.getCompany().getName();
-  }
+  
+  /*
+   * public String getCompanyName(Receipt receipt) { return receipt.getCompany().getName(); }
+   * 
+   * public String getCompanyCountry(Receipt receipt) { return receipt.getCompany().getCountry(); }
+   * 
+   * public String getCompanyCity(Receipt receipt) { return receipt.getCompany().getCity(); }
+   * 
+   * public String getCompanyStreet(Receipt receipt) { return receipt.getCompany().getStreet(); }
+   * 
+   * public int getCompanyNumber(Receipt receipt) { return receipt.getCompany().getNumber(); }
+   */
 
-  public String getCompanyCountry(Receipt receipt) {
-    return receipt.getCompany().getCountry();
-  }
-
-  public String getCompanyCity(Receipt receipt) {
-    return receipt.getCompany().getCity();
-  }
-
-  public String getCompanyStreet(Receipt receipt) {
-    return receipt.getCompany().getStreet();
-  }
-
-  public int getCompanyNumber(Receipt receipt) {
-    return receipt.getCompany().getNumber();
-  }
-
+}
 }
