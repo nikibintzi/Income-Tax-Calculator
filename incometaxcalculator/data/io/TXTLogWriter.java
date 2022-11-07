@@ -2,16 +2,19 @@ package incometaxcalculator.data.io;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
-public class TXTLogWriter extends FileWriter {
+import incometaxcalculator.data.management.TaxpayerManager;
 
-  private static final short ENTERTAINMENT = 0;
+public class TXTLogWriter extends LogWriter {
+
+  /*private static final short ENTERTAINMENT = 0;
   private static final short BASIC = 1;
   private static final short TRAVEL = 2;
   private static final short HEALTH = 3;
   private static final short OTHER = 4;
-
-  public void generateFile(int taxRegistrationNumber) throws IOException {
+ */
+  /*public void generateFile(int taxRegistrationNumber) throws IOException {
     PrintWriter outputStream = new PrintWriter(
         new java.io.FileWriter(taxRegistrationNumber + "_LOG.txt"));
     outputStream.println("Name: " + getTaxpayerName(taxRegistrationNumber));
@@ -37,6 +40,24 @@ public class TXTLogWriter extends FileWriter {
         .println("Health: " + getTaxpayerAmountOfReceiptKind(taxRegistrationNumber, HEALTH));
     outputStream.println("Other: " + getTaxpayerAmountOfReceiptKind(taxRegistrationNumber, OTHER));
     outputStream.close();
-  }
+  }*/
 
+  @Override
+  protected void makeFile(PrintWriter outputStream, int flagIncrease, String[] constantsMatrix, ArrayList<String> taxpayerInformation) {
+    for (int i=0; i < constantsMatrix.length; i++ ) 
+    {
+      if (i==4 && flagIncrease==0 ) {
+        outputStream.println(constantsMatrix[i+1] + taxpayerInformation.get(i));
+        i++;
+        System.out.println(i);
+      }else if (i==4 && flagIncrease==1) {
+        outputStream.println(constantsMatrix[i] + taxpayerInformation.get(i));
+        i++;
+        System.out.println(i);
+      }else {
+        outputStream.println(constantsMatrix[i] + taxpayerInformation.get(i));
+      }
+    }
+  }
+  
 }

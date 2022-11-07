@@ -6,17 +6,60 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import incometaxcalculator.data.management.Receipt;
+import incometaxcalculator.data.management.TaxpayerManager;
 
-public class XMLInfoWriter extends FileWriter {
+public abstract class XMLInfoWriter implements FileWriter {
 
+  private TaxpayerManager theManager;
+  //////////////////////////////////////////////////
+  public int getReceiptId(Receipt receipt) {
+    return receipt.getId();
+  }
+
+  public String getReceiptIssueDate(Receipt receipt) {
+    return receipt.getIssueDate();
+  }
+
+  public String getReceiptKind(Receipt receipt) {
+    return receipt.getKind();
+  }
+
+  public float getReceiptAmount(Receipt receipt) {
+    return receipt.getAmount();
+  }
+  /////////////////////////////////////////////////
+  public String getCompanyName(Receipt receipt) {
+    return receipt.getCompany().getName();
+  }
+
+  public String getCompanyCountry(Receipt receipt) {
+    return receipt.getCompany().getCountry();
+  }
+
+  public String getCompanyCity(Receipt receipt) {
+    return receipt.getCompany().getCity();
+  }
+
+  public String getCompanyStreet(Receipt receipt) {
+    return receipt.getCompany().getStreet();
+  }
+
+  public int getCompanyNumber(Receipt receipt) {
+    return receipt.getCompany().getNumber();
+  }
+  
+  public HashMap<Integer, Receipt> getReceiptHashMap(int taxRegistrationNumber) {
+    return theManager.getReceiptHashMap(taxRegistrationNumber);
+  }
+  
   public void generateFile(int taxRegistrationNumber) throws IOException {
 
     PrintWriter outputStream = new PrintWriter(
         new java.io.FileWriter(taxRegistrationNumber + "_INFO.xml"));
-    outputStream.println("<Name> " + getTaxpayerName(taxRegistrationNumber) + " </Name>");
+    outputStream.println("<Name> " + theManager.getTaxpayerName(taxRegistrationNumber) + " </Name>");
     outputStream.println("<AFM> " + taxRegistrationNumber + " </AFM>");
-    outputStream.println("<Status> " + getTaxpayerStatus(taxRegistrationNumber) + " </Status>");
-    outputStream.println("<Income> " + getTaxpayerIncome(taxRegistrationNumber) + " </Income>");
+    outputStream.println("<Status> " + theManager.getTaxpayerStatus(taxRegistrationNumber) + " </Status>");
+    outputStream.println("<Income> " + theManager.getTaxpayerIncome(taxRegistrationNumber) + " </Income>");
     outputStream.println();// den mas emfanize to \n se aplo notepad
     outputStream.println("<Receipts>");
     outputStream.println();

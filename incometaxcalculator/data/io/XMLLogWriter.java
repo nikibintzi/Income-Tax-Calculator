@@ -2,9 +2,13 @@ package incometaxcalculator.data.io;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
-public class XMLLogWriter extends FileWriter {
+import incometaxcalculator.data.management.TaxpayerManager;
 
+public class XMLLogWriter extends LogWriter {
+
+  /*
   private static final short ENTERTAINMENT = 0;
   private static final short BASIC = 1;
   private static final short TRAVEL = 2;
@@ -42,6 +46,25 @@ public class XMLLogWriter extends FileWriter {
     outputStream.println(
         "<Other> " + getTaxpayerAmountOfReceiptKind(taxRegistrationNumber, OTHER) + " </Other>");
     outputStream.close();
+  }*/
+
+  @Override
+  protected void makeFile(PrintWriter outputStream, int flagIncrease, String[] constantsMatrix, ArrayList<String> taxpayerInformation) {
+    for (int i=0; i < constantsMatrix.length; i=i+2 ) 
+    {
+      if (i==8 && flagIncrease==0 ) {
+        outputStream.println(constantsMatrix[i+2] + taxpayerInformation.get(i) + constantsMatrix[i+3]);
+        i=i+4;
+        System.out.println(i);
+      }else if (i==8 && flagIncrease==1) {
+        outputStream.println(constantsMatrix[i] + taxpayerInformation.get(i) + constantsMatrix[i+1]);
+        i=i+4;
+        System.out.println(i);
+      }else {
+        outputStream.println(constantsMatrix[i] + taxpayerInformation.get(i) + constantsMatrix[i+1]);
+      } 
+    }
+    
   }
 
 }
