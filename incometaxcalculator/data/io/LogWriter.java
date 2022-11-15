@@ -52,14 +52,15 @@ public abstract class LogWriter implements FileWriter{
     taxpayerInformation.add(Float.toString(theManager.getTaxpayerAmountOfReceiptKind(taxRegistrationNumber, HEALTH)));
     taxpayerInformation.add(Float.toString(theManager.getTaxpayerAmountOfReceiptKind(taxRegistrationNumber, OTHER)));
     
-    double taxpayerVariationTaxOnReceipts = Double.parseDouble(taxpayerInformation.get(3)); 
+    double taxpayerVariationTaxOnReceipts = Double.parseDouble(taxpayerInformation.get(4)); 
+    System.out.println(" taxpayerVariationTaxOnReceipts is:" + taxpayerVariationTaxOnReceipts);
     if (taxpayerVariationTaxOnReceipts < 0) {
       //flagIncrease=1;
       //constantsTXT[4]="Tax Increase";
       //constantsXML[8]="<Tax Increase> ";
     //}else {
       flagIncrease=0;
-      constantsTXT[4]="Tax Decrease";
+      constantsTXT[4]="Tax Decrease: ";
       constantsXML[8]="<Tax Decrease> ";
       constantsXML[9]=" </Tax Decrease>";    
     }

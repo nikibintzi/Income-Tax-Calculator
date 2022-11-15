@@ -74,8 +74,13 @@ public class TXTInfoWriter extends InfoWriter {
     }
   }*/
     System.out.println("_______________IN generateTaxpayerReceipts : TXTINFOWRITER____________");
+    System.out.println("informationOnAllReceipts: "+informationOnAllReceipts.size());
     for (int j=0; j < informationOnAllReceipts.size(); j++ ) {
+      System.out.println(" j is:" + j);
+      System.out.println("informationOnAllReceipts.get(j).size(): "+informationOnAllReceipts.get(j).size());
       for (int k=0; k < informationOnAllReceipts.get(j).size(); k++ ) {
+        System.out.println(" k is:" + k);
+        System.out.println(infoOnReceiptsMatrix[k] + informationOnAllReceipts.get(j).get(k));
         outputStream.println(infoOnReceiptsMatrix[k] + informationOnAllReceipts.get(j).get(k));
       }
       outputStream.println();

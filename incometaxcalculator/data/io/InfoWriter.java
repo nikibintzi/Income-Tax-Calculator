@@ -38,13 +38,24 @@ public abstract class InfoWriter implements FileWriter{
     informationOnTaxpayer.add(theManager.getTaxpayerStatus(taxRegistrationNumber));
     informationOnTaxpayer.add(theManager.getTaxpayerIncome(taxRegistrationNumber));
       
-    HashMap<Integer, Receipt> receiptsHashMap = getReceiptHashMap(taxRegistrationNumber);
-    Iterator<HashMap.Entry<Integer, Receipt>> iterator = receiptsHashMap.entrySet().iterator();
-    ArrayList<String> informationOnReceipt = new ArrayList<String>();
+  
+    //ArrayList<String> informationOnReceipt = new ArrayList<String>();
     ArrayList<ArrayList> informationOnAllReceipts = new ArrayList<ArrayList>();
+    //
+    int temp=0;
+    //
+    HashMap<Integer, Receipt> receiptsHashMap = getReceiptHashMap(taxRegistrationNumber);
+    //
+    System.out.println("receiptsHashMap.size() :"+receiptsHashMap.size());
+    System.out.println("receiptsHashMap :"+receiptsHashMap);
+    //
+    Iterator<HashMap.Entry<Integer, Receipt>> iterator = receiptsHashMap.entrySet().iterator();
     while (iterator.hasNext()) {
+      ArrayList<String> informationOnReceipt = new ArrayList<String>();
       HashMap.Entry<Integer, Receipt> entry = iterator.next();
       Receipt receipt = entry.getValue();
+      //temp++;
+      //
       informationOnReceipt.add(Integer.toString(getReceiptId(receipt)));
       informationOnReceipt.add(getReceiptIssueDate(receipt));
       informationOnReceipt.add(getReceiptKind(receipt));
@@ -54,8 +65,19 @@ public abstract class InfoWriter implements FileWriter{
       informationOnReceipt.add(getCompanyCity(receipt));
       informationOnReceipt.add(getCompanyStreet(receipt));
       informationOnReceipt.add(Integer.toString(getCompanyNumber(receipt)));
+      //
+      for (String el : informationOnReceipt){
+        System.out.println("element :"+el);
+      }
+      //System.out.println("temp: "+temp);
+      System.out.println("_______________________");
+      //
       informationOnAllReceipts.add(informationOnReceipt);
+      //informationOnReceipt.clear();
     }
+    //
+    System.out.println("informationOnAllReceipts: "+informationOnAllReceipts.size());
+    //
     
     if (fileFormat.equals("txt")) {
       PrintWriter outputStream = new PrintWriter(
