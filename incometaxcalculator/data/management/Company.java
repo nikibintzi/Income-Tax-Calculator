@@ -14,10 +14,10 @@ public class Company {
     return name;
   }
 
-  // poy xreiazomaste thn getAddress? jo
-  public String getAddress() {
+  // h getAddress den xrhsimopoieite pote
+  /*public String getAddress() {
     return address.toString();
-  }
+  }*/
 
   public String getCountry() {
     return address.getCountry();
