@@ -78,11 +78,11 @@ class TaxpayerTest {
 
     @Test
     void getVariationTaxOnReceipts() {
-        SingleTaxpayer singleTaxpayer = new SingleTaxpayer("Avgoustinos Zigos", 123456780, 10000);
+        SingleTaxpayer singleTaxpayer = new SingleTaxpayer("Avgoustinos Zigos", 123456780, 5000);
         try {
             Receipt receipt1 = new Receipt(1,"12/12/2012",1001.5F,"Other",new Company("Lol2","Greece", "Ioannina", "Zerva", 1));
             Receipt receipt2 = new Receipt(2,"11/11/2013",1002.5F,"Basic",new Company("Lol2","Greece", "Ioannina", "Zerva", 1));
-            double variationTaxOnReceipts = 0.04 * 0.0535 * 10000;
+            float variationTaxOnReceipts = (float) (0.15 * 0.0535 * 5000);
 
             singleTaxpayer.addReceipt(receipt1);
             singleTaxpayer.addReceipt(receipt2);
