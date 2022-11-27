@@ -11,9 +11,13 @@ import incometaxcalculator.exceptions.WrongTaxpayerStatusException;
 
 public abstract class FileReader {
 
+  //protected abstract int extractReceiptId(String[] values);
+
+  //protected abstract String extractString(String fieldsLine);
+  
   protected abstract int checkForReceipt(BufferedReader inputStream)
       throws NumberFormatException, IOException;
-
+  
   protected abstract String getValueOfField(String fieldsLine) throws WrongFileFormatException;
   
   /**
@@ -62,7 +66,7 @@ public abstract class FileReader {
 
   protected void createTaxpayer(String fullname, int taxRegistrationNumber, float income,
       String status) throws WrongTaxpayerStatusException {
-
+    
     TaxpayerManager manager = new TaxpayerManager();
     manager.createTaxpayer(fullname, taxRegistrationNumber, status, income);
   }
@@ -83,5 +87,27 @@ public abstract class FileReader {
       return false;
     }
   }
+  
+  /*protected int checkForReceipt(BufferedReader inputStream) throws NumberFormatException, IOException {
+    String line;
+    while (!isEmpty(line = inputStream.readLine())) {
+      String values[] = line.split(" ", 3);
+      return extractReceiptId(values);
+    }
+    return -1;
+  }
 
+  protected String getValueOfField(String fieldsLine) throws WrongFileFormatException {
+    if (isEmpty(fieldsLine)) {
+      throw new WrongFileFormatException();
+    }
+    try {
+      return extractString(fieldsLine);
+    } catch (NullPointerException e) {
+      throw new WrongFileFormatException();
+    }
+  }*/
+
+
+  
 }
