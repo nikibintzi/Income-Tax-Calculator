@@ -21,14 +21,14 @@ class TaxpayerTest {
 
             float startingReceipts = 0;
             int startingTotalReceiptsGathered = 0;
-            HashMap<Integer, Receipt> receiptHashBeforeAdd = new HashMap();
+            HashMap<Integer, Receipt> receiptHashBeforeAdd;
             receiptHashBeforeAdd = singletaxpayer1.getReceiptHashMap();
 
             singletaxpayer1.addReceipt(receipt1);
 
             startingReceipts += 1000.5;
             startingTotalReceiptsGathered += 1;
-            HashMap<Integer, Receipt> receiptHashAfterAdd = new HashMap();
+            HashMap<Integer, Receipt> receiptHashAfterAdd;
             receiptHashAfterAdd = singletaxpayer1.getReceiptHashMap();
 
             assertEquals(startingReceipts,singletaxpayer1.getAmountOfReceiptKind((short) 1));
@@ -54,12 +54,12 @@ class TaxpayerTest {
 
                 startingReceipts += singletaxpayer1.getAmountOfReceiptKind((short) 1);
                 startingTotalReceiptsGathered += singletaxpayer1.getTotalReceiptsGathered();
-                HashMap<Integer, Receipt> receiptHashAfterAdd = new HashMap();
+                HashMap<Integer, Receipt> receiptHashAfterAdd;
                 receiptHashAfterAdd = singletaxpayer1.getReceiptHashMap();
 
                 singletaxpayer1.removeReceipt(receipt1.getId());
 
-                HashMap<Integer, Receipt> receiptHashAfterRemove = new HashMap();
+                HashMap<Integer, Receipt> receiptHashAfterRemove;
                 receiptHashAfterRemove = singletaxpayer1.getReceiptHashMap();
 
                 startingReceipts -= 1000.5;
