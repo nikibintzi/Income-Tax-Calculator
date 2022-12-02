@@ -12,17 +12,21 @@ public abstract class Taxpayer {
   private float amountPerReceiptsKind[] = new float[5];
   private int totalReceiptsGathered = 0;
   private HashMap<Integer, Receipt> receiptHashMap = new HashMap<Integer, Receipt>(0);
-  private static final short ENTERTAINMENT = 0;
+  /*private static final short ENTERTAINMENT = 0;
   private static final short BASIC = 1;
   private static final short TRAVEL = 2;
   private static final short HEALTH = 3;
-  private static final short OTHER = 4;
+  private static final short OTHER = 4;*/
 
-  public abstract double calculateBasicTax();
   //my stuff
+  //Erothma 2
   public final String[] receiptKindArray = new String[]{"Entertainment", "Basic", "Travel", "Health", "Other"};
   public final double[] basicTaxMultiplier = new double[]{0.08, 0.04, 0.15, 0.3};
   public final double[] variationCheck = new double[]{0.2, 0.4, 0.6};
+
+  //Erothma 3
+  protected double[] incomeComparisonArray = new double[4];
+  protected double[] returnVarArray = new double[5];
 
   protected Taxpayer(String fullname, int taxRegistrationNumber, float income) {
     this.fullname = fullname;
@@ -30,6 +34,19 @@ public abstract class Taxpayer {
     this.income = income;
   }
 
+  public double calculateBasicTax(){
+    if (income < incomeComparisonArray[0]) {
+      return returnVarArray[0];
+    } else if (income < incomeComparisonArray[1]) {
+      return returnVarArray[1];
+    } else if (income < incomeComparisonArray[2]) {
+      return returnVarArray[2];
+    } else if (income < incomeComparisonArray[3]) {
+      return returnVarArray[3];
+    } else {
+      return returnVarArray[4];
+    }
+  }
 
   public void addReceipt(Receipt receipt) throws WrongReceiptKindException {
     for (int i = 0; i < 5; i++) {
@@ -123,7 +140,7 @@ public abstract class Taxpayer {
     } else if (totalAmountOfReceipts < 0.4 * income) {
       return calculateBasicTax() * 0.04;
     } else if (totalAmountOfReceipts < 0.6 * income) {
-      return -calculateBasicTax() * 0.15;
+      return calculateBasicTax() * 0.15;
     } else {
       return -calculateBasicTax() * 0.3;
     }
@@ -131,19 +148,12 @@ public abstract class Taxpayer {
 
   public double getVariationTaxOnReceipts() {
     float totalAmountOfReceipts = getTotalAmountOfReceipts();
-    for(int i = 1;i < 4;i++){
+    for(int i = 0;i < 3;i++){
       if(totalAmountOfReceipts < income * variationCheck[i]){
-        //System.out.println(income);
-        //System.out.println(basicTaxMultiplier[i]);
-        //System.out.println(income * basicTaxMultiplier[i]);
-        System.out.println(calculateBasicTax());
-        System.out.println(basicTaxMultiplier[i]);
-        System.out.println(calculateBasicTax() * basicTaxMultiplier[i]);
-        System.out.println(535 * 0.04);
         return (calculateBasicTax() * basicTaxMultiplier[i]);
       }
     }
-    return calculateBasicTax() * basicTaxMultiplier[4];
+    return calculateBasicTax() * basicTaxMultiplier[3];
   }
 
   private float getTotalAmountOfReceipts() {
