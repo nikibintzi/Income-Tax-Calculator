@@ -8,11 +8,14 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -25,6 +28,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 
 import incometaxcalculator.data.management.TaxpayerManager;
 import incometaxcalculator.exceptions.WrongFileEndingException;
@@ -39,6 +44,9 @@ public class GraphicalInterface extends JFrame {
   private TaxpayerManager taxpayerManager = new TaxpayerManager();
   private String taxpayersTRN = new String();
   private JTextField txtTaxRegistrationNumber;
+  private JTextField filename = new JTextField();
+  private JTextField dir = new JTextField();
+
 
   public static void main(String[] args) {
     EventQueue.invokeLater(new Runnable() {
@@ -87,6 +95,8 @@ public class GraphicalInterface extends JFrame {
     fileLoaderPanel.add(loadPanel, BorderLayout.CENTER);
     JCheckBox txtBox = new JCheckBox("Txt file");
     JCheckBox xmlBox = new JCheckBox("Xml file");
+    //
+    JLabel l;
 
     txtBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -117,55 +127,75 @@ public class GraphicalInterface extends JFrame {
     contentPane.add(taxRegisterNumberListScrollPane);
 
     JButton btnLoadTaxpayer = new JButton("Load Taxpayer");
+    //
+    l = new JLabel("no file selected");
+    
     btnLoadTaxpayer.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        int answer = JOptionPane.showConfirmDialog(null, fileLoaderPanel, "",
-            JOptionPane.OK_CANCEL_OPTION);
-        if (answer == 0) {
-          String taxRegistrationNumber = taxRegistrationNumberField.getText();
-          while (taxRegistrationNumber.length() != 9 && answer == 0) {
+        String taxRegistrationNumberAndFile="";
+        String taxRegistrationNumber="";
+        JFileChooser choose = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory()); 
+        choose.setDialogTitle("Select a file to load taxpayer from.");
+        choose.setAcceptAllFileFilterUsed(false); 
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("txt and xml files", "txt", "xml");
+        choose.addChoosableFileFilter(filter);
+        int answer = choose.showOpenDialog(null);//GraphicalInterface.this
+        if (answer == JFileChooser.APPROVE_OPTION) {
+          File file =choose.getSelectedFile();
+          filename.setText(file.getName());
+          dir.setText(choose.getCurrentDirectory().toString());
+          taxRegistrationNumberAndFile=filename.getText(); 
+          int firstIndex = taxRegistrationNumberAndFile.indexOf("_");
+          taxRegistrationNumber= (filename.getText().toString()).substring(0,firstIndex);//(filename.getText().toString()).substring(0,9);
+          //System.out.printf("----taxRegistrationNumberAndFile: %s\n",taxRegistrationNumberAndFile);
+          //System.out.printf("taxRegistrationNumber: %s\n",taxRegistrationNumber);
+          while (!taxRegistrationNumberAndFile.contains("INFO") && answer == 0) {
             JOptionPane.showMessageDialog(null,
-                "The tax  registration number must have 9 digit.\n" + " Try again.");
-            answer = JOptionPane.showConfirmDialog(null, fileLoaderPanel, "",
-                JOptionPane.OK_CANCEL_OPTION);
-            taxRegistrationNumber = taxRegistrationNumberField.getText();
+                "The file must have the following format to be loaded:\n" + "[tax resistration number]_INFO.[txt or xml]. Try again.");
+            answer = choose.showOpenDialog(null);
+            file =choose.getSelectedFile();
+            filename.setText(file.getName());
+            dir.setText(choose.getCurrentDirectory().toString());
+            taxRegistrationNumberAndFile=filename.getText(); 
+            firstIndex = taxRegistrationNumberAndFile.indexOf("_");
+            taxRegistrationNumber= (filename.getText().toString()).substring(0,firstIndex);
+            //System.out.printf("AGAIN----taxRegistrationNumberAndFile: %s\n",taxRegistrationNumberAndFile);
+            //System.out.printf("AGAIN taxRegistrationNumber: %s\n",taxRegistrationNumber);
           }
-          if (answer == 0) {
-            int trn = 0;
-            String taxRegistrationNumberFile;
-            try {
-              trn = Integer.parseInt(taxRegistrationNumber);
-              if (txtBox.isSelected()) {
-                taxRegistrationNumberFile = taxRegistrationNumber + "_INFO.txt";
-              } else {
-                taxRegistrationNumberFile = taxRegistrationNumber + "_INFO.xml";
-              }
-              if (taxpayerManager.containsTaxpayer(trn)) {
-                JOptionPane.showMessageDialog(null, "This taxpayer is already loaded.");
-              } else {
-                taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
-                taxRegisterNumberModel.addElement(taxRegistrationNumber);
-              }
-              // textPane.setText(taxpayersTRN);
-            } catch (NumberFormatException e1) {
-              JOptionPane.showMessageDialog(null,
-                  "The tax registration number must have only digits.");
-            } catch (IOException e1) {
-              JOptionPane.showMessageDialog(null, "The file doesn't exists.");
-            } catch (WrongFileFormatException e1) {
-              JOptionPane.showMessageDialog(null, "Please check your file format and try again.");
-            } catch (WrongFileEndingException e1) {
-              JOptionPane.showMessageDialog(null, "Please check your file ending and try again.");
-            } catch (WrongTaxpayerStatusException e1) {
-              JOptionPane.showMessageDialog(null, "Please check taxpayer's status and try again.");
-            } catch (WrongReceiptKindException e1) {
-              JOptionPane.showMessageDialog(null, "Please check receipts kind and try again.");
-            } catch (WrongReceiptDateException e1) {
-              JOptionPane.showMessageDialog(null,
-                  "Please make sure your date is " + "DD/MM/YYYY and try again.");
+          l.setText(file.getAbsolutePath());
+        }
+        if (answer == JFileChooser.CANCEL_OPTION) {
+          System.out.printf("IN ELSE answer: %d\n",answer);
+          JOptionPane.showMessageDialog(null, "You canceled the operation and the taxpayer wasn\'t loaded.");
+        }
+        if (answer == 0) {
+          int trn = 0;
+          try {
+            trn = Integer.parseInt(taxRegistrationNumber);
+            if (taxpayerManager.containsTaxpayer(trn)) {
+              JOptionPane.showMessageDialog(null, "This taxpayer is already loaded.");
+            } else {
+              taxpayerManager.loadTaxpayer(taxRegistrationNumberAndFile);
+              taxRegisterNumberModel.addElement(taxRegistrationNumber);
             }
+            // textPane.setText(taxpayersTRN);
+          } catch (NumberFormatException e1) {
+            JOptionPane.showMessageDialog(null,
+                "The tax registration number must have only digits.");
+          } catch (IOException e1) {
+            JOptionPane.showMessageDialog(null, "The file doesn't exists.");
+          } catch (WrongFileFormatException e1) {
+            JOptionPane.showMessageDialog(null, "Please check your file format and try again.");
+          } catch (WrongFileEndingException e1) {
+            JOptionPane.showMessageDialog(null, "Please check your file ending and try again.");
+          } catch (WrongTaxpayerStatusException e1) {
+            JOptionPane.showMessageDialog(null, "Please check taxpayer's status and try again.");
+          } catch (WrongReceiptKindException e1) {
+            JOptionPane.showMessageDialog(null, "Please check receipts kind and try again.");
+          } catch (WrongReceiptDateException e1) {
+            JOptionPane.showMessageDialog(null,
+                "Please make sure your date is " + "DD/MM/YYYY and try again.");
           }
-
         }
       }
     });
