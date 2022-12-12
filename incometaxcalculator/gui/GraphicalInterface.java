@@ -142,33 +142,6 @@ public class GraphicalInterface extends JFrame {
     //
     l = new JLabel("no file selected");
     
-    /*f = new JFrame("Choose a TRN from the list");
-    Container c = getContentPane();
-    //JPanel p =new JPanel();
-    c.setLayout(new FlowLayout());
-    b = new JList<String>(taxRegisterNumberModel);
-    //b= jList;
-    //set a selected index;
-    //add list to panelp.add(b);
-    b.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    b.setLayoutOrientation(JList.VERTICAL);
-    b.setSelectedIndex(0);
-    b.setVisibleRowCount(-1);        
-    JScrollPane taxRegisterNumberScrollPane = new JScrollPane(b);
-    c.add(taxRegisterNumberScrollPane);
-    taxRegisterNumberScrollPane.addListSelectionListener(this);
-    taxRegisterNumberScrollPane.setPreferredSize(new Dimension(250, 80));
-    f.add(taxRegisterNumberScrollPane);  
-    p.setVisible(true);
-    b.setVisible(true); 
-    //set the size of frame
-    f.setSize(350,200);
-    //JButton showButton = new JButton("Choose an TRN");
-    //f.add(showButton);
-    //JLabel statusLabel = new JLabel("",JLabel.CENTER);    
-    //statusLabel.setSize(350,100);*/
-
-    
     btnLoadTaxpayer.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         String taxRegistrationNumberAndFile="";
