@@ -14,6 +14,7 @@ import java.util.Iterator;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -41,6 +42,7 @@ public class TaxpayerData extends JFrame {
   private static final short HEALTH = 3;
   private static final short OTHER = 4;
   private JPanel contentPane;
+  private static String kind = "";
 
   public TaxpayerData(int taxRegistrationNumber, TaxpayerManager taxpayerManager) {
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -53,7 +55,7 @@ public class TaxpayerData extends JFrame {
     DefaultListModel<Integer> receiptsModel = new DefaultListModel<Integer>();
 
     JList<Integer> receiptsList = new JList<Integer>(receiptsModel);
-    receiptsList.setBackground(new Color(153, 204, 204));
+    receiptsList.setBackground(new Color(166, 254, 204));
     receiptsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     receiptsList.setSelectedIndex(0);
     receiptsList.setVisibleRowCount(3);
@@ -65,20 +67,27 @@ public class TaxpayerData extends JFrame {
 
     HashMap<Integer, Receipt> receipts = taxpayerManager.getReceiptHashMap(taxRegistrationNumber);
     Iterator<HashMap.Entry<Integer, Receipt>> iterator = receipts.entrySet().iterator();
-
+    String[] kindsOfReceipts = {"Entertainment", "Basic","Travel","Health","Other" };
+    
     while (iterator.hasNext()) {
       HashMap.Entry<Integer, Receipt> entry = iterator.next();
       Receipt receipt = entry.getValue();
       receiptsModel.addElement(receipt.getId());
     }
-
+    //String kind;
     JButton btnAddReceipt = new JButton("Add Receipt");
     btnAddReceipt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         JPanel receiptImporterPanel = new JPanel(new GridLayout(9, 2));
-        JTextField receiptID = new JTextField(16);
+        JComboBox kindsList = new JComboBox(kindsOfReceipts);
+        kindsList.setSelectedIndex(0);
+        kindsList.addActionListener(new ActionListener() {        
+          public void actionPerformed(ActionEvent e) {
+            JComboBox cb = (JComboBox)e.getSource();
+            kind = (String)cb.getSelectedItem();
+          } 
+        });
         JTextField date = new JTextField(16);
-        JTextField kind = new JTextField(16);
         JTextField amount = new JTextField(16);
         JTextField company = new JTextField(16);
         JTextField country = new JTextField(16);
@@ -89,12 +98,10 @@ public class TaxpayerData extends JFrame {
         float amountValue;
         String dateValue, kindValue, companyValue, countryValue;
         String cityValue, streetValue;
-        receiptImporterPanel.add(new JLabel("Receipt ID:"));
-        receiptImporterPanel.add(receiptID);
+        receiptImporterPanel.add(new JLabel("Kind:"));
+        receiptImporterPanel.add(kindsList);
         receiptImporterPanel.add(new JLabel("Date:"));
         receiptImporterPanel.add(date);
-        receiptImporterPanel.add(new JLabel("Kind:"));
-        receiptImporterPanel.add(kind);
         receiptImporterPanel.add(new JLabel("Amount:"));
         receiptImporterPanel.add(amount);
         receiptImporterPanel.add(new JLabel("Company:"));
@@ -110,9 +117,9 @@ public class TaxpayerData extends JFrame {
         int op = JOptionPane.showConfirmDialog(null, receiptImporterPanel, "",
             JOptionPane.OK_CANCEL_OPTION);
         if (op == 0) {
-          receiptIDValue = Integer.parseInt(receiptID.getText());
+          receiptIDValue = taxpayerManager.getTaxpayerTotalReceiptsGathered(taxRegistrationNumber)+1;//Integer.parseInt(receiptID.getText());
           dateValue = date.getText();
-          kindValue = kind.getText();
+          kindValue = kind;//kind.getText();
           amountValue = Float.parseFloat(amount.getText());
           companyValue = company.getText();
           countryValue = country.getText();
@@ -134,6 +141,10 @@ public class TaxpayerData extends JFrame {
                 "Please make sure your date " + "is DD/MM/YYYY and try again.");
           } catch (ReceiptAlreadyExistsException e1) {
             JOptionPane.showMessageDialog(null, "Receipt ID already exists.");
+          } catch (WrongFileFormatException e1) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Wrong File format.");
+            e1.printStackTrace();
           }
         }
       }
@@ -160,6 +171,10 @@ public class TaxpayerData extends JFrame {
                 "Problem with opening file ." + receiptIDValue + "_INFO.txt");
           } catch (WrongReceiptKindException e1) {
             JOptionPane.showMessageDialog(null, "Please check receipt's kind and try again.");
+          } catch (WrongFileFormatException e1) {
+            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(null, "Wrong File format.");
+            e1.printStackTrace();
           }
         }
       }
