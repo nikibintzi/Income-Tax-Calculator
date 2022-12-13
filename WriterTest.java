@@ -55,7 +55,7 @@ class WriterTest {
     void loadInfoTXTFile() throws IOException, NumberFormatException, WrongFileFormatException, WrongFileEndingException, WrongTaxpayerStatusException, WrongReceiptKindException, WrongReceiptDateException {
         //System.out.println(taxpayerManager.containsTaxpayer());
         taxRegistrationNumberFile = "123456789_INFO.txt";
-        File text = new File("C:\\Users\\Avgoustinos\\Desktop\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject\\123456789_LOG.txt");
+        File text = new File("C:\\Users\\Avgoustinos\\Desktop\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject\\123456789_LOG.txt");//Allagh to path
         Scanner scnr = new Scanner(text);
         int line1 = 0;
         int lineNumber = 1;
