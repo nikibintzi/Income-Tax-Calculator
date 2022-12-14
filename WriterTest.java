@@ -38,7 +38,7 @@ class WriterTest {
 
     @BeforeAll
     static void setUpBeforeClass() throws Exception {
-        workingDir = Path.of("", "C:\\Desktop\\SoftDevII-ProjectMaterial-2023\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject");
+        workingDir = Path.of("", "C:\\Users\\Avgoustinos\\Desktop\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject");
     }
 
     @Test
@@ -74,11 +74,25 @@ class WriterTest {
 
     @Test
     void loadInfoXMLFile() throws IOException, NumberFormatException, WrongFileFormatException, WrongFileEndingException, WrongTaxpayerStatusException, WrongReceiptKindException, WrongReceiptDateException {
-        System.out.println(taxpayerManager.containsTaxpayer());
+        //System.out.println(taxpayerManager.containsTaxpayer());
         taxRegistrationNumberFile = "130456094_INFO.xml";
         taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
+        File text = new File("C:\\Users\\Avgoustinos\\Desktop\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject\\130456094_LOG.xml");//Allagh to path
+        Scanner scnr = new Scanner(text);
+        int line1 = 0;
+        int lineNumber = 1;
+        while(scnr.hasNextLine()){
+            String line = scnr.nextLine();
+            if(lineNumber == 7){
+                String replace1 = line.replace("<TotalReceiptsGathered> ", "");
+                String replace2 = replace1.replace(" </TotalReceiptsGathered>", "");
+                line1 =  Integer.valueOf(replace2);
+                //System.out.println(line1);
+            }
+            lineNumber++;
+        }
         assertEquals(true,taxpayerManager.containsTaxpayer());
-        assertEquals(2,taxpayerManager.getTaxpayerTotalReceiptsGathered(130456094));
+        assertEquals(line1,taxpayerManager.getTaxpayerTotalReceiptsGathered(130456094));
     }
 
     @Test
