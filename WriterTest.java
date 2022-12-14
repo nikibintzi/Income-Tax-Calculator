@@ -1,12 +1,14 @@
 package incometaxcalculator.data.io;
 
-//import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
@@ -24,172 +26,221 @@ import incometaxcalculator.exceptions.WrongFileFormatException;
 import incometaxcalculator.exceptions.WrongReceiptDateException;
 import incometaxcalculator.exceptions.WrongReceiptKindException;
 import incometaxcalculator.exceptions.WrongTaxpayerStatusException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 
 class WriterTest {
 
-    private static Path workingDir;
-    private static String taxRegistrationNumberFile;
-    private static HashMap<Integer, Taxpayer> taxpayerHashMap = new HashMap<Integer, Taxpayer>(0);
-    private static TaxpayerManager taxpayerManager = new TaxpayerManager();
-    private static HashMap<Integer, Integer> receiptOwnerTRN = new HashMap<Integer, Integer>(0);
-
-    @BeforeAll
-    static void setUpBeforeClass() throws Exception {
-        workingDir = Path.of("", "C:\\Users\\Avgoustinos\\Desktop\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject");
+  private static Path workingDir;
+  private static String taxRegistrationNumberFile;
+  private static HashMap<Integer, Taxpayer> taxpayerHashMap = new HashMap<Integer, Taxpayer>(0);
+  private static TaxpayerManager taxpayerManager = new TaxpayerManager();
+  private static HashMap<Integer, Integer> receiptOwnerTRN = new HashMap<Integer, Integer>(0);
+  
+  @BeforeAll
+  static void setUpBeforeClass() throws Exception {
+    workingDir = Path.of("", "C:\\Users\\nikib\\Downloads\\SoftDevII-ProjectMaterial-2023\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject");
+  }
+  
+  @Test
+  void existsTaxpayerManager() throws IOException {
+    assertNotNull(taxpayerManager);
+  }
+  
+  @Test
+  void existsTaxpayerHashMap() throws IOException {
+    assertNotNull(taxpayerHashMap);
+  }
+  
+  @Test
+  void loadInfoTXTFile() throws IOException, NumberFormatException, WrongFileFormatException, WrongFileEndingException, WrongTaxpayerStatusException, WrongReceiptKindException, WrongReceiptDateException {
+    taxRegistrationNumberFile = "123456789_INFO.txt";
+    taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
+    int receiptsNum=taxpayerManager.getTaxpayerTotalReceiptsGathered(123456789);
+    
+    File text = new File("C:\\Users\\nikib\\Downloads\\SoftDevII-ProjectMaterial-2023\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject\\123456789_INFO.txt");
+    Scanner scnr = new Scanner(text);
+    int lineNumber = 1;
+    int AFM=0;
+    int succesfulLoad = 0;
+    String name="";
+    String status="";
+    String lookFor= "Receipt ID: "+1;
+    while(scnr.hasNextLine()){
+        String line = scnr.nextLine();
+        if(lineNumber == 1){
+          name = line.replace("Name: ", "");
+        }
+        if(lineNumber == 2){
+          String replace = line.replace("AFM: ", "");
+          AFM =  Integer.valueOf(replace);
+        }
+        if(lineNumber == 3){
+          status = line.replace("Status: ", "");
+        }
+        if(line.indexOf(lookFor) != -1){
+            succesfulLoad=1;
+          }
+        lineNumber++;
     }
-
-    @Test
-    void existsTaxpayerManager() throws IOException {
-        assertNotNull(taxpayerManager);
+    assertEquals(true, taxpayerManager.containsTaxpayer());
+    assertEquals(name,taxpayerManager.getTaxpayerName(123456789));
+    assertEquals(AFM,123456789);
+    assertEquals(status,taxpayerManager.getTaxpayerStatus(123456789));
+    assertEquals(succesfulLoad,1);
+  }
+  
+  @Test
+  void saveLogTXTFile() throws IOException, NumberFormatException, WrongFileFormatException, WrongFileEndingException, WrongTaxpayerStatusException, WrongReceiptKindException, WrongReceiptDateException {
+    taxRegistrationNumberFile = "123456789_INFO.txt";
+    taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
+    taxpayerManager.saveLogFile(123456789,"txt");
+    File text = new File("C:\\Users\\nikib\\Downloads\\SoftDevII-ProjectMaterial-2023\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject\\123456789_LOG.txt");
+    Scanner scnr = new Scanner(text);
+    int receiptsGathered = 0;
+    int lineNumber = 1;
+    while(scnr.hasNextLine()){
+        String line = scnr.nextLine();
+        if(lineNumber == 7){
+            String replace = line.replace("TotalReceiptsGathered: ", "");
+            receiptsGathered =  Integer.valueOf(replace);
+        }
+        lineNumber++;
     }
-
-    @Test
-    void existsTaxpayerHashMap() throws IOException {
-        assertNotNull(taxpayerHashMap);
+    taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
+    assertEquals(true,taxpayerManager.containsTaxpayer());
+    assertEquals(receiptsGathered,taxpayerManager.getTaxpayerTotalReceiptsGathered(123456789));
+  }
+  
+  
+  @Test
+  void loadInfoXMLFile() throws IOException, NumberFormatException, WrongFileFormatException, WrongFileEndingException, WrongTaxpayerStatusException, WrongReceiptKindException, WrongReceiptDateException {
+    taxRegistrationNumberFile = "123456789_INFO.xml";
+    taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
+    int receiptsNum=taxpayerManager.getTaxpayerTotalReceiptsGathered(123456789);
+    File text = new File("C:\\Users\\nikib\\Downloads\\SoftDevII-ProjectMaterial-2023\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject\\123456789_INFO.xml");
+    Scanner scnr = new Scanner(text);
+    int lineNumber = 1;
+    int AFM=0;
+    int succesfulLoad = 0;
+    String name="";
+    String status="";
+    String lookFor= "<ReceiptID> "+1;
+    while(scnr.hasNextLine()){
+        String line = scnr.nextLine();
+        if(lineNumber == 1){
+          String[] arrOfStr = line.split(" ", 4);
+          name = arrOfStr[1]+" "+arrOfStr[2];
+        }
+        if(lineNumber == 2){
+          String[] arrOfStr = line.split(" ", 3);
+          AFM =  Integer.valueOf(arrOfStr[1]);
+        }
+        if(lineNumber == 3){
+          String[] arrOfStr = line.split(" ", 5);
+          status = arrOfStr[1]+" "+arrOfStr[2]+" "+arrOfStr[3];
+        }
+        if(line.indexOf(lookFor) != -1){
+            succesfulLoad=1;
+          }
+        lineNumber++;
     }
+    assertEquals(true, taxpayerManager.containsTaxpayer());
+    assertEquals(name,taxpayerManager.getTaxpayerName(123456789));
+    assertEquals(AFM,123456789);
+    assertEquals(status,taxpayerManager.getTaxpayerStatus(123456789));
+    assertEquals(succesfulLoad,1);
+    
+  }
+  
+  
+  @Test
+  void saveLogXMLFile() throws IOException, NumberFormatException, WrongFileFormatException, WrongFileEndingException, WrongTaxpayerStatusException, WrongReceiptKindException, WrongReceiptDateException {
+    taxRegistrationNumberFile = "123456789_INFO.xml";
+    taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
+    taxpayerManager.saveLogFile(123456789,"xml");
+    File text = new File("C:\\Users\\nikib\\Downloads\\SoftDevII-ProjectMaterial-2023\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject\\123456789_LOG.xml");
+    Scanner scnr = new Scanner(text);
+    int receiptsGathered = 0;
+    int lineNumber = 1;
+    while(scnr.hasNextLine()){
+        String line = scnr.nextLine();
+        if(lineNumber == 7){
+          String[] arrOfStr = line.split(" ", 3);
+          receiptsGathered =  Integer.valueOf(arrOfStr[1]);
+        }
+        lineNumber++;
+    }
+    taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
+    assertEquals(true,taxpayerManager.containsTaxpayer());
+    assertEquals(receiptsGathered,taxpayerManager.getTaxpayerTotalReceiptsGathered(123456789));
+  }
 
-    @Test
-    void loadInfoTXTFile() throws IOException, NumberFormatException, WrongFileFormatException, WrongFileEndingException, WrongTaxpayerStatusException, WrongReceiptKindException, WrongReceiptDateException {
-        //System.out.println(taxpayerManager.containsTaxpayer());
-        taxRegistrationNumberFile = "123456789_INFO.txt";
-        File text = new File("C:\\Users\\Avgoustinos\\Desktop\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject\\123456789_LOG.txt");//Allagh to path
+  
+  @Test
+  void addReceiptUpdateInfo() throws IOException, WrongFileFormatException, WrongReceiptKindException, NumberFormatException, WrongFileEndingException, WrongTaxpayerStatusException {
+    try {
+        taxpayerManager.loadTaxpayer("4435_INFO.txt");
+        int receiptsNum=taxpayerManager.getTaxpayerTotalReceiptsGathered(4435);
+        //System.out.printf("ReceiptsGathered 4435: %d\n",receiptsNum);
+        
+        Receipt receipt1 = new Receipt(receiptsNum+1,"12/12/2012",1001.5F,"Other",new Company("Lol","Greece", "Ioannina", "Zerva", 1));
+        Receipt receipt2 = new Receipt(receiptsNum+2,"11/11/2013",1002.5F,"Basic",new Company("Oasis","Greece", "Ioannina", "Zerva", 3));
+        
+        taxpayerManager.getTaxpayer(4435).addReceipt(receipt1);
+        taxpayerManager.getTaxpayer(4435).addReceipt(receipt2);
+        //System.out.printf("ReceiptsGathered 4435 after: %d\n",taxpayerManager.getTaxpayerTotalReceiptsGathered(4435));
+        taxpayerManager.updateFiles(4435);
+        
+        File text = new File("C:\\Users\\nikib\\Downloads\\SoftDevII-ProjectMaterial-2023\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject\\4435_INFO.txt");
         Scanner scnr = new Scanner(text);
-        int line1 = 0;
-        int lineNumber = 1;
+        int succesfulAdd = 0;
+        String lookFor= "Receipt ID: "+(receiptsNum+1);
         while(scnr.hasNextLine()){
             String line = scnr.nextLine();
-            if(lineNumber == 7){
-                String replace = line.replace("TotalReceiptsGathered: ", "");
-                line1 =  Integer.valueOf(replace);
+            if(line.indexOf(lookFor) != -1){
+              lookFor= "Receipt ID: "+(receiptsNum+2);
             }
-            lineNumber++;
+            if(line.indexOf(lookFor) != -1){
+              succesfulAdd=1;
+            }
         }
-        taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
-        assertEquals(true,taxpayerManager.containsTaxpayer());
-        assertEquals(line1,taxpayerManager.getTaxpayerTotalReceiptsGathered(123456789));
+        
+        assertEquals(true,taxpayerManager.containsTaxpayer(4435));
+        assertEquals(receiptsNum+2,taxpayerManager.getTaxpayerTotalReceiptsGathered(4435));
+        assertEquals(succesfulAdd,1);
+    } catch (WrongReceiptDateException e) {
+        throw new RuntimeException(e);
     }
+  }
+  
+  @Test
+  void deleteReceiptUpdateInfo() throws IOException, WrongFileFormatException, WrongReceiptKindException, NumberFormatException, WrongFileEndingException, WrongTaxpayerStatusException {
+    try {
+        taxpayerManager.loadTaxpayer("123456789_INFO.txt");
+        int receiptsNum=taxpayerManager.getTaxpayerTotalReceiptsGathered(123456789);
+        System.out.printf("ReceiptsGathered 123456789: %d\n",receiptsNum);
+        if (receiptsNum>1) {
+          taxpayerManager.removeReceipt(receiptsNum);
+        }
+        System.out.printf("ReceiptsGathered 123456789 after: %d\n",taxpayerManager.getTaxpayerTotalReceiptsGathered(123456789));
 
-    @Test
-    void loadInfoXMLFile() throws IOException, NumberFormatException, WrongFileFormatException, WrongFileEndingException, WrongTaxpayerStatusException, WrongReceiptKindException, WrongReceiptDateException {
-        //System.out.println(taxpayerManager.containsTaxpayer());
-        taxRegistrationNumberFile = "130456094_INFO.xml";
-        taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
-        File text = new File("C:\\Users\\Avgoustinos\\Desktop\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject\\130456094_LOG.xml");//Allagh to path
+        File text = new File("C:\\Users\\nikib\\Downloads\\SoftDevII-ProjectMaterial-2023\\SoftDevII-ProjectMaterial-2023\\2023-IncomeTaxCalculatorProject\\123456789_INFO.txt");
         Scanner scnr = new Scanner(text);
-        int line1 = 0;
-        int lineNumber = 1;
+        int succesfulDel = 0;
+        String lookFor= "Receipt ID: "+receiptsNum;
+        //System.out.printf("LookFor: %s",lookFor);
         while(scnr.hasNextLine()){
             String line = scnr.nextLine();
-            if(lineNumber == 7){
-                String replace1 = line.replace("<TotalReceiptsGathered> ", "");
-                String replace2 = replace1.replace(" </TotalReceiptsGathered>", "");
-                line1 =  Integer.valueOf(replace2);
-                //System.out.println(line1);
+            if(line.indexOf(lookFor) == -1)
+            {
+              succesfulDel=1;
             }
-            lineNumber++;
         }
-        assertEquals(true,taxpayerManager.containsTaxpayer());
-        assertEquals(line1,taxpayerManager.getTaxpayerTotalReceiptsGathered(130456094));
+        assertEquals(true,taxpayerManager.containsTaxpayer(123456789));
+        assertEquals(receiptsNum-1,taxpayerManager.getTaxpayerTotalReceiptsGathered(123456789));
+        assertEquals(succesfulDel,1);
+    } catch (WrongReceiptDateException e) {
+        throw new RuntimeException(e);
     }
-
-    @Test
-    void saveLogTXTFile() throws IOException, NumberFormatException, WrongFileFormatException, WrongFileEndingException, WrongTaxpayerStatusException, WrongReceiptKindException, WrongReceiptDateException {
-        System.out.println(taxpayerManager.containsTaxpayer());
-        taxRegistrationNumberFile = "123456789_INFO.txt";
-        taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
-        taxpayerManager.saveLogFile(123456789,"txt");
-        Path file = workingDir.resolve("123456789_LOG.txt");
-        String expected="Name: Apostolos Zarras\r\n" +
-                "AFM: 123456789\r\n" +
-                "Income: 22570.0\r\n" +
-                "Basic Tax: 1207.495\r\n" +
-                "Tax Increase: 48.2998\r\n" +
-                "Total Tax: 1255.7948\r\n" +
-                "TotalReceiptsGathered: 5\r\n" +
-                "Entertainment: 0.0\r\n" +
-                "Basic: 4801.0\r\n" +
-                "Travel: 100.0\r\n" +
-                "Health: 0.0\r\n" +
-                "Other: 1000.0\r\n";
-        String content;
-        //System.out.printf("______________ expected string length: %d\n", expected.length());
-        content = Files.readString(file);
-        //System.out.printf("______________ content string length: %d\n", content.length());
-        long count = Files.lines(file).count();
-        assertEquals(count,12);
-        assertEquals(content,expected);
-    }
-
-    @Test
-    void saveLogXMLFile() throws IOException, NumberFormatException, WrongFileFormatException, WrongFileEndingException, WrongTaxpayerStatusException, WrongReceiptKindException, WrongReceiptDateException {
-        System.out.println(taxpayerManager.containsTaxpayer());
-        taxRegistrationNumberFile = "130456094_INFO.xml";
-        taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
-        taxpayerManager.saveLogFile(130456094,"xml");
-        Path file = workingDir.resolve("130456094_LOG.xml");
-        String expected="<Name> Nikos Zisis </Name>\r\n" +
-                "<AFM> 130456094 </AFM>\r\n" +
-                "<Income> 40000.0 </Income>\r\n" +
-                "<Basic Tax> 2400.44 </Basic Tax>\r\n" +
-                "<Tax Increase> 192.0352 </Tax Increase>\r\n" +
-                "<Total Tax> 2592.4752 </Total Tax>\r\n" +
-                "<TotalReceiptsGathered> 2 </TotalReceiptsGathered>\r\n" +
-                "<Entertainment> 0.0 </Entertainment>\r\n" +
-                "<Basic> 4000.0 </Basic>\r\n" +
-                "<Travel> 0.0 </Travel>\r\n" +
-                "<Health> 0.0 </Health>\r\n" +
-                "<Other> 2000.0 </Other>\r\n";
-        String content;
-        content = Files.readString(file);
-        long count = Files.lines(file).count();
-        assertEquals(count,12);
-        assertEquals(content,expected);
-    }
-
-    @Test
-    void addReceiptUpdateWriter() throws IOException, WrongFileFormatException, WrongReceiptKindException, NumberFormatException, WrongFileEndingException, WrongTaxpayerStatusException {
-        try {
-            System.out.printf("Contains Taxpayer 4435: %b",taxpayerManager.containsTaxpayer(4435));
-            taxRegistrationNumberFile = "4435_INFO.txt";
-            taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
-
-            Receipt receipt1 = new Receipt(6,"12/12/2012",1001.5F,"Other",new Company("Lol","Greece", "Ioannina", "Zerva", 1));
-            Receipt receipt2 = new Receipt(7,"11/11/2013",1002.5F,"Basic",new Company("Oasis","Greece", "Ioannina", "Zerva", 3));
-
-            taxpayerManager.getTaxpayer(4435).addReceipt(receipt1);
-            taxpayerManager.getTaxpayer(4435).addReceipt(receipt2);
-            taxpayerManager.updateFiles(4435);
-            taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
-
-            Path file = workingDir.resolve("4435_INFO.txt");
-            long count = Files.lines(file).count();
-            assertEquals(true,taxpayerManager.containsTaxpayer(4435));
-            assertEquals(7,taxpayerManager.getTaxpayerTotalReceiptsGathered(4435));
-            assertEquals(count,75);
-        } catch (WrongReceiptDateException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Test
-    void deleteReceiptUpdateWriter() throws IOException, WrongFileFormatException, WrongReceiptKindException, NumberFormatException, WrongFileEndingException, WrongTaxpayerStatusException {
-        try {
-            System.out.printf("Contains Taxpayer 4435: %b",taxpayerManager.containsTaxpayer(4435));
-            taxRegistrationNumberFile = "4435_INFO.txt";
-            taxpayerManager.removeReceipt(7);
-            taxpayerManager.loadTaxpayer(taxRegistrationNumberFile);
-
-            Path file = workingDir.resolve("4435_INFO.txt");
-            long count = Files.lines(file).count();
-            assertEquals(true,taxpayerManager.containsTaxpayer(4435));
-            assertEquals(6,taxpayerManager.getTaxpayerTotalReceiptsGathered(4435));
-            assertEquals(count,65);
-        } catch (WrongReceiptDateException e) {
-            throw new RuntimeException(e);
-        }
-    }
+  }
 
 }
