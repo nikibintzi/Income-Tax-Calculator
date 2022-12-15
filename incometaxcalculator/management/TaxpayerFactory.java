@@ -10,8 +10,16 @@ import static incometaxcalculator.data.management.TaxpayerManager.taxpayerHashMa
 ///////////////////////////////////////////////////////////////////////////
 
 public class TaxpayerFactory {
+
+    private TaxpayerManager theManager;
+
+    public TaxpayerFactory(TaxpayerManager theManager) {
+        super();
+        this.theManager = theManager;
+    }
+
     public void createTaxpayerFactory(String fullname, int taxRegistrationNumber, String status,
-                                float income) throws WrongTaxpayerStatusException {
+                                      float income) throws WrongTaxpayerStatusException {
         if (status.equals("Married Filing Jointly")) {
             taxpayerHashMap.put(taxRegistrationNumber,
                     new MarriedFilingJointlyTaxpayer(fullname, taxRegistrationNumber, income));
@@ -28,28 +36,27 @@ public class TaxpayerFactory {
             throw new WrongTaxpayerStatusException();
         }
     }
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    //DEN BORO NA VRO TI THELEI NA VELTIOTHEI STO IF-ELSE LOGIC TOU updateFilesFactory.
-    //////////////////////////////////////////////////////////////////////////////////////////////?
-    public FileWriter updateFilesFactory(int taxRegistrationNumber) throws IOException {
+
+    public FileWriter updateFilesFactory(int taxRegistrationNumber) throws IOException, WrongFileFormatException {
         if (new File(taxRegistrationNumber + "_INFO.xml").exists()) {
-            new XMLInfoWriter().generateFile(taxRegistrationNumber);
+            new XMLInfoWriter(theManager).generateFile(taxRegistrationNumber,"xml");
         } else {
-            new TXTInfoWriter().generateFile(taxRegistrationNumber);
+            new TXTInfoWriter(theManager).generateFile(taxRegistrationNumber,"txt");
             return null;
         }
         if (new File(taxRegistrationNumber + "_INFO.txt").exists()) {
-            new TXTInfoWriter().generateFile(taxRegistrationNumber);
+            new TXTInfoWriter(theManager).generateFile(taxRegistrationNumber,"txt");
         }
         return null;
     }
+
     public FileWriter saveLogFileFactory(String fileFormat)
             throws WrongFileFormatException {
         if (fileFormat.equals("txt")) {
-            return new TXTLogWriter();
+            return new TXTLogWriter(theManager);
         }
         else if (fileFormat.equals("xml")) {
-            return new XMLLogWriter();
+            return new XMLLogWriter(theManager);
         }
         else {
             throw new WrongFileFormatException();
@@ -60,7 +67,7 @@ public class TaxpayerFactory {
 
         String ending[] = fileName.split("\\.");
         if (ending[1].equals("txt")) {
-             return new TXTFileReader();
+            return new TXTFileReader();
         } else if (ending[1].equals("xml")) {
             return new XMLFileReader();
         } else {

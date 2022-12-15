@@ -5,7 +5,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import incometaxcalculator.data.io.*;
+import incometaxcalculator.data.io.FileReader;
+import incometaxcalculator.data.io.FileWriter;
+import incometaxcalculator.data.io.TXTFileReader;
+import incometaxcalculator.data.io.TXTInfoWriter;
+import incometaxcalculator.data.io.TXTLogWriter;
+import incometaxcalculator.data.io.XMLFileReader;
+import incometaxcalculator.data.io.XMLInfoWriter;
+import incometaxcalculator.data.io.XMLLogWriter;
 import incometaxcalculator.exceptions.ReceiptAlreadyExistsException;
 import incometaxcalculator.exceptions.WrongFileEndingException;
 import incometaxcalculator.exceptions.WrongFileFormatException;
@@ -14,42 +21,22 @@ import incometaxcalculator.exceptions.WrongReceiptKindException;
 import incometaxcalculator.exceptions.WrongTaxpayerStatusException;
 
 public class TaxpayerManager {
-////////////////////////////////////////////////////////EKANA THN PRIVATE PROTECTED NA TO KSANADO
-  protected static HashMap<Integer, Taxpayer> taxpayerHashMap = new HashMap<Integer, Taxpayer>(0);//To ekana PROTECTED gia to factory!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-////////////////////////////////////////////////////////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  protected static HashMap<Integer, Taxpayer> taxpayerHashMap = new HashMap<Integer, Taxpayer>(0);
   private static HashMap<Integer, Integer> receiptOwnerTRN = new HashMap<Integer, Integer>(0);
 
   public void createTaxpayer(String fullname, int taxRegistrationNumber, String status,
-      float income) throws WrongTaxpayerStatusException {
-
-    TaxpayerFactory taxpayerFactory = new TaxpayerFactory();
+                             float income) throws WrongTaxpayerStatusException {
+    TaxpayerFactory taxpayerFactory = new TaxpayerFactory(this);
     taxpayerFactory.createTaxpayerFactory(fullname,taxRegistrationNumber,status,income);
-
-
-    /*if (status.equals("Married Filing Jointly")) {
-      taxpayerHashMap.put(taxRegistrationNumber,
-          new MarriedFilingJointlyTaxpayer(fullname, taxRegistrationNumber, income));
-    } else if (status.equals("Married Filing Separately")) {
-      taxpayerHashMap.put(taxRegistrationNumber,
-          new MarriedFilingSeparatelyTaxpayer(fullname, taxRegistrationNumber, income));
-    } else if (status.equals("Single")) {
-      taxpayerHashMap.put(taxRegistrationNumber,
-          new SingleTaxpayer(fullname, taxRegistrationNumber, income));
-    } else if (status.equals("Head of Household")) {
-      taxpayerHashMap.put(taxRegistrationNumber,
-          new HeadOfHouseholdTaxpayer(fullname, taxRegistrationNumber, income));
-    } else {
-      throw new WrongTaxpayerStatusException();
-    }*/
-
   }
 
   public void createReceipt(int receiptId, String issueDate, float amount, String kind,
-      String companyName, String country, String city, String street, int number,
-      int taxRegistrationNumber) throws WrongReceiptKindException, WrongReceiptDateException {
+                            String companyName, String country, String city, String street, int number,
+                            int taxRegistrationNumber) throws WrongReceiptKindException, WrongReceiptDateException {
 
     Receipt receipt = new Receipt(receiptId, issueDate, amount, kind,
-        new Company(companyName, country, city, street, number));
+            new Company(companyName, country, city, street, number));
     taxpayerHashMap.get(taxRegistrationNumber).addReceipt(receipt);
     receiptOwnerTRN.put(receiptId, taxRegistrationNumber);
   }
@@ -67,57 +54,36 @@ public class TaxpayerManager {
   }
 
   public void addReceipt(int receiptId, String issueDate, float amount, String kind,
-      String companyName, String country, String city, String street, int number,
-      int taxRegistrationNumber) throws IOException, WrongReceiptKindException,
-      WrongReceiptDateException, ReceiptAlreadyExistsException {
+                         String companyName, String country, String city, String street, int number,
+                         int taxRegistrationNumber) throws IOException, WrongReceiptKindException,
+          WrongReceiptDateException, ReceiptAlreadyExistsException, WrongFileFormatException {
 
     if (containsReceipt(receiptId)) {
       throw new ReceiptAlreadyExistsException();
     }
     createReceipt(receiptId, issueDate, amount, kind, companyName, country, city, street, number,
-        taxRegistrationNumber);
+            taxRegistrationNumber);
     updateFiles(taxRegistrationNumber);
   }
 
-  public void removeReceipt(int receiptId) throws IOException, WrongReceiptKindException {
+  public void removeReceipt(int receiptId) throws IOException, WrongReceiptKindException, WrongFileFormatException {
     taxpayerHashMap.get(receiptOwnerTRN.get(receiptId)).removeReceipt(receiptId);
     updateFiles(receiptOwnerTRN.get(receiptId));
     receiptOwnerTRN.remove(receiptId);
   }
 
-  private void updateFiles(int taxRegistrationNumber) throws IOException {
-    TaxpayerFactory taxpayerFactory = new TaxpayerFactory();
+  //private
+  public void updateFiles(int taxRegistrationNumber) throws IOException, WrongFileFormatException {
+    TaxpayerFactory taxpayerFactory = new TaxpayerFactory(this);
     taxpayerFactory.updateFilesFactory(taxRegistrationNumber);
-
-    /*if (new File(taxRegistrationNumber + "_INFO.xml").exists()) {
-      new XMLInfoWriter().generateFile(taxRegistrationNumber);
-    } else {
-      new TXTInfoWriter().generateFile(taxRegistrationNumber);
-      return;
-    }
-    if (new File(taxRegistrationNumber + "_INFO.txt").exists()) {
-      new TXTInfoWriter().generateFile(taxRegistrationNumber);
-    }*/
   }
 
   public void saveLogFile(int taxRegistrationNumber, String fileFormat)
-      throws IOException, WrongFileFormatException {
+          throws IOException, WrongFileFormatException {
 
-    TaxpayerFactory taxpayerFactory = new TaxpayerFactory();
+    TaxpayerFactory taxpayerFactory = new TaxpayerFactory(this);
     FileWriter writer =  taxpayerFactory.saveLogFileFactory(fileFormat);
-    writer.generateFile(taxRegistrationNumber);
-
-    /*if (fileFormat.equals("txt")) {
-      TXTLogWriter writer = new TXTLogWriter();
-      writer.generateFile(taxRegistrationNumber);
-    }
-    else if (fileFormat.equals("xml")) {
-      XMLLogWriter writer = new XMLLogWriter();
-      writer.generateFile(taxRegistrationNumber);
-    }
-    else {
-      throw new WrongFileFormatException();
-    }*/
+    writer.generateFile(taxRegistrationNumber,fileFormat);
   }
 
   public boolean containsTaxpayer(int taxRegistrationNumber) {
@@ -147,23 +113,12 @@ public class TaxpayerManager {
   }
 
   public void loadTaxpayer(String fileName)
-      throws NumberFormatException, IOException, WrongFileFormatException, WrongFileEndingException,
-      WrongTaxpayerStatusException, WrongReceiptKindException, WrongReceiptDateException {
+          throws NumberFormatException, IOException, WrongFileFormatException, WrongFileEndingException,
+          WrongTaxpayerStatusException, WrongReceiptKindException, WrongReceiptDateException {
 
-    TaxpayerFactory taxpayerFactory = new TaxpayerFactory();
+    TaxpayerFactory taxpayerFactory = new TaxpayerFactory(this);
     FileReader reader =  taxpayerFactory.loadTaxpayerFactory(fileName);
     reader.readFile(fileName);
-
-    /*String ending[] = fileName.split("\\.");
-    if (ending[1].equals("txt")) {
-      FileReader reader = new TXTFileReader();
-      reader.readFile(fileName);
-    } else if (ending[1].equals("xml")) {
-      FileReader reader = new XMLFileReader();
-      reader.readFile(fileName);
-    } else {
-      throw new WrongFileEndingException();
-    }*/
   }
 
   public String getTaxpayerName(int taxRegistrationNumber) {
@@ -174,7 +129,7 @@ public class TaxpayerManager {
     if (taxpayerHashMap.get(taxRegistrationNumber) instanceof MarriedFilingJointlyTaxpayer) {
       return "Married Filing Jointly";
     } else if (taxpayerHashMap
-        .get(taxRegistrationNumber) instanceof MarriedFilingSeparatelyTaxpayer) {
+            .get(taxRegistrationNumber) instanceof MarriedFilingSeparatelyTaxpayer) {
       return "Married Filing Separately";
     } else if (taxpayerHashMap.get(taxRegistrationNumber) instanceof SingleTaxpayer) {
       return "Single";

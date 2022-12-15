@@ -14,11 +14,6 @@ public class Company {
     return name;
   }
 
-  // h getAddress den xrhsimopoieite pote
-  /*public String getAddress() {
-    return address.toString();
-  }*/
-
   public String getCountry() {
     return address.getCountry();
   }
