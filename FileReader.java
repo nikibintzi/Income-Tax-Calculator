@@ -10,17 +10,12 @@ import incometaxcalculator.exceptions.WrongReceiptKindException;
 import incometaxcalculator.exceptions.WrongTaxpayerStatusException;
 
 public abstract class FileReader {
-
-  //protected abstract int extractReceiptId(String line);
-
-  //protected abstract String extractString(String fieldsLine);
   
   protected abstract int checkForReceipt(BufferedReader inputStream)
       throws NumberFormatException, IOException;
   
   protected abstract String getValueOfField(String fieldsLine) throws WrongFileFormatException;
   
-  //protected abstract int findReceiptId(BufferedReader inputStream) throws IOException;
   /**
    * 
    * @throws NumberFormatException 

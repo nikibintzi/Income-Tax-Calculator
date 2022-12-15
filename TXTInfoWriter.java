@@ -12,25 +12,42 @@ public class TXTInfoWriter extends InfoWriter {
 
   public TXTInfoWriter(TaxpayerManager newTaxpayerManager) {
     super(newTaxpayerManager);
+    
+    constantsAboutTaxpayer.add("Name: ");
+    constantsAboutTaxpayer.add("AFM: ");
+    constantsAboutTaxpayer.add("Status: ");
+    constantsAboutTaxpayer.add("Income: ");
+    constantsAboutTaxpayer.add("Receipts: ");
+    
+    constantsAboutReceipts.add("Receipt ID: ");
+    constantsAboutReceipts.add("Date: ");
+    constantsAboutReceipts.add("Kind: ");
+    constantsAboutReceipts.add("Amount: ");
+    constantsAboutReceipts.add("Company: ");
+    constantsAboutReceipts.add("Country: ");
+    constantsAboutReceipts.add("City: ");
+    constantsAboutReceipts.add("Street: ");
+    constantsAboutReceipts.add("Number: ");
+
   }
 
   @Override
-  protected void printInFile(PrintWriter outputStream, String[] constantsMatrix,
+  protected void printInFile(PrintWriter outputStream, ArrayList<String> constantsMatrix,
       ArrayList<String> informationOnTaxpayer) {
-    for (int i=0; i < constantsMatrix.length; i++ ) {
+    for (int i=0; i < constantsMatrix.size(); i++ ) {
       if (i==4) {
-        outputStream.println(constantsMatrix[i]);
+        outputStream.println(constantsMatrix.get(i));
       }else {
-        outputStream.println(constantsMatrix[i] + informationOnTaxpayer.get(i));
+        outputStream.println(constantsMatrix.get(i) + informationOnTaxpayer.get(i));
       }
     }
   }
   
   @Override
-  protected void generateTaxpayerReceipts(int taxRegistrationNumber, PrintWriter outputStream,String[] infoOnReceiptsMatrix,ArrayList<ArrayList> informationOnAllReceipts ) {
+  protected void generateTaxpayerReceipts(int taxRegistrationNumber, PrintWriter outputStream,ArrayList<String> infoOnReceiptsMatrix,ArrayList<ArrayList> informationOnAllReceipts ) {
     for (int j=0; j < informationOnAllReceipts.size(); j++ ) {
       for (int k=0; k < informationOnAllReceipts.get(j).size(); k++ ) {
-        outputStream.println(infoOnReceiptsMatrix[k] + informationOnAllReceipts.get(j).get(k));
+        outputStream.println(infoOnReceiptsMatrix.get(k) + informationOnAllReceipts.get(j).get(k));
       }
       outputStream.println();
     }

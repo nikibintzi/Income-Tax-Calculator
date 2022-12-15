@@ -17,44 +17,24 @@ public abstract class LogWriter implements FileWriter{
   private static final short HEALTH = 3;
   private static final short OTHER = 4;
   
-  private String[] constantsAboutTaxpayerTXT = {"Name: ","AFM: ","Income: ","Basic Tax: ","Tax Increase: ", "Total Tax: ","TotalReceiptsGathered: ","Entertainment: ", "Basic: ","Travel: ","Health: ","Other: " };
-  private String[] constantsAboutTaxpayerXML = {"<Name> "," </Name>","<AFM> "," </AFM>","<Income> "," </Income>","<Basic Tax> "," </Basic Tax>","<Tax Increase> "," </Tax Increase>",
-                                    "<Total Tax> ", " </Total Tax>",
-                                    "<TotalReceiptsGathered> "," </TotalReceiptsGathered>",
-                                    "<Entertainment> ", " </Entertainment>",
-                                    "<Basic> "," </Basic>",
-                                    "<Travel> "," </Travel>",
-                                    "<Health> "," </Health>",
-                                    "<Other> "," </Other>"};
+
+  protected ArrayList<String> constantsAboutTaxpayer = new ArrayList<String>();
   
-  protected abstract void printInFile(PrintWriter outputStream, String[] constantsMatrix, ArrayList<String> taxpayerInformation);
+  protected abstract void printInFile(PrintWriter outputStream, ArrayList<String> constantsMatrix, ArrayList<String> taxpayerInformation);
    
   public LogWriter(TaxpayerManager newTaxpayerManager) {
       theManager = newTaxpayerManager;
   }
   
   @Override
-  public void generateFile(int taxRegistrationNumber, String fileFormat) throws IOException, WrongFileFormatException {
+  public void generateFile(int taxRegistrationNumber, String fileFormat) throws IOException {
     ArrayList<String> taxpayerInformation = new ArrayList<String>();
     taxpayerInformation=extractTaxpayerInfoInList(taxRegistrationNumber, taxpayerInformation);
-    
-    double taxpayerVariationTaxOnReceipts = Double.parseDouble(taxpayerInformation.get(4));
-    if (taxpayerVariationTaxOnReceipts < 0) {
-      constantsAboutTaxpayerTXT[4]="Tax Decrease: ";
-      constantsAboutTaxpayerXML[8]="<Tax Decrease> ";
-      constantsAboutTaxpayerXML[9]=" </Tax Decrease>";    
-    }
-    if (fileFormat.equals("txt")) {
-      generateOutputStream(fileFormat, taxRegistrationNumber,taxpayerInformation, constantsAboutTaxpayerTXT);
-    } else if (fileFormat.equals("xml")) {
-      generateOutputStream(fileFormat, taxRegistrationNumber,taxpayerInformation, constantsAboutTaxpayerXML);
-    } else {
-      throw new WrongFileFormatException();
-    } 
+    generateOutputStream(fileFormat, taxRegistrationNumber,taxpayerInformation, constantsAboutTaxpayer);
   }
 
   protected void generateOutputStream(String fileFormat, int taxRegistrationNumber,
-      ArrayList<String> taxpayerInformation, String[] constantsAboutTaxpayer)
+      ArrayList<String> taxpayerInformation, ArrayList<String> constantsAboutTaxpayer)
       throws IOException {
     PrintWriter outputStream = new PrintWriter(
       new java.io.FileWriter(taxRegistrationNumber + "_LOG."+fileFormat));

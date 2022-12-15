@@ -14,15 +14,13 @@ public abstract class InfoWriter implements FileWriter{
 
   private TaxpayerManager theManager;
   
-  private String[] constantsAboutTaxpayerTXT = {"Name: ","AFM: ","Status: ","Income: ","Receipts: "};
-  private String[] constantsAboutTaxpayerXML = {"<Name> "," </Name>","<AFM> "," </AFM>","<Status> "," </Status>","<Income> "," </Income>","<Receipts> "};
-  private String[] constantsAboutReceiptsTXT = {"Receipt ID: ","Date: ","Kind: ","Amount: ","Company: ","Country: ","City: ","Street: ","Number: "};
-  private String[] constantsAboutReceiptsXML = {"<ReceiptID> "," </ReceiptID>","<Date> "," </Date>","<Kind> "," </Kind>","<Amount> "," </Amount>","<Company> "," </Company>","<Country> "," </Country>","<City> "," </City>","<Street> "," </Street>","<Number> "," </Number>"};  
+  protected ArrayList<String> constantsAboutTaxpayer = new ArrayList<String>();
+  protected ArrayList<String> constantsAboutReceipts = new ArrayList<String>();
   
   protected abstract void generateTaxpayerReceipts(int taxRegistrationNumber,
-      PrintWriter outputStream, String[] infoOnReceiptsMatrix,ArrayList<ArrayList> informationOnAllReceipts);
+      PrintWriter outputStream, ArrayList<String> infoOnReceiptsMatrix,ArrayList<ArrayList> informationOnAllReceipts);
 
-  protected abstract void printInFile(PrintWriter outputStream, String[] constantsMatrix,
+  protected abstract void printInFile(PrintWriter outputStream, ArrayList<String> constantsMatrix,
       ArrayList<String> informationToPrint);
   
   public InfoWriter(TaxpayerManager newTaxpayerManager) {
@@ -32,28 +30,21 @@ public abstract class InfoWriter implements FileWriter{
   @Override
   public void generateFile(int taxRegistrationNumber, String fileFormat) throws IOException, WrongFileFormatException {
     ArrayList<String> informationOnTaxpayer = new ArrayList<String>();
-    informationOnTaxpayer=extractTaxpayerInfoInList(taxRegistrationNumber, informationOnTaxpayer);
-      
+    
+    extractTaxpayerInfoInList(taxRegistrationNumber, informationOnTaxpayer);
+    
     ArrayList<ArrayList> informationOnAllReceipts = new ArrayList<ArrayList>();
     informationOnAllReceipts =extractReceiptsInfoInList(taxRegistrationNumber, informationOnAllReceipts);
-    if (fileFormat.equals("txt")) {
-      generateOutputStream(fileFormat,taxRegistrationNumber, informationOnTaxpayer,
-          informationOnAllReceipts,constantsAboutTaxpayerTXT,constantsAboutReceiptsTXT);
-    } else if (fileFormat.equals("xml")) {
-        generateOutputStream(fileFormat,taxRegistrationNumber, informationOnTaxpayer,
-            informationOnAllReceipts,constantsAboutTaxpayerXML,constantsAboutReceiptsXML);
-    } else {
-      throw new WrongFileFormatException();
-    } 
+    generateOutputStream(fileFormat,taxRegistrationNumber, informationOnTaxpayer,informationOnAllReceipts,constantsAboutTaxpayer,constantsAboutReceipts);
+
   }
 
-  protected ArrayList<String> extractTaxpayerInfoInList(int taxRegistrationNumber,
+  protected void extractTaxpayerInfoInList(int taxRegistrationNumber,
       ArrayList<String> informationOnTaxpayer) {
     informationOnTaxpayer.add(theManager.getTaxpayerName(taxRegistrationNumber));
     informationOnTaxpayer.add(Integer.toString(taxRegistrationNumber));
     informationOnTaxpayer.add(theManager.getTaxpayerStatus(taxRegistrationNumber));
     informationOnTaxpayer.add(theManager.getTaxpayerIncome(taxRegistrationNumber));
-    return informationOnTaxpayer;
   }
   
   protected ArrayList<ArrayList> extractReceiptsInfoInList(int taxRegistrationNumber,
@@ -79,7 +70,7 @@ public abstract class InfoWriter implements FileWriter{
   }
 
   protected void generateOutputStream(String fileFormat, int taxRegistrationNumber,
-      ArrayList<String> informationOnTaxpayer, ArrayList<ArrayList> informationOnAllReceipts,String[] constantsAboutTaxpayer,String[] constantsAboutReceipts)
+      ArrayList<String> informationOnTaxpayer, ArrayList<ArrayList> informationOnAllReceipts,ArrayList<String> constantsAboutTaxpayer,ArrayList<String> constantsAboutReceipts)
       throws IOException {
     PrintWriter outputStream = new PrintWriter(
       new java.io.FileWriter(taxRegistrationNumber + "_INFO."+fileFormat));
