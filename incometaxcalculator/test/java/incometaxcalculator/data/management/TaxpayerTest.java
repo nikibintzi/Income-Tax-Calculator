@@ -82,11 +82,10 @@ class TaxpayerTest {
         } catch (WrongReceiptKindException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Test
-    void createTaxpayerTest() throws WrongTaxpayerStatusException {
+    void createSingleTaxpayerTest() throws WrongTaxpayerStatusException {
 
         TaxpayerManager taxpayerManager = new TaxpayerManager();
         taxpayerManager.createTaxpayer("Avgoustinos Zigos", 987654321, "Single", 10000000.5F);
@@ -97,11 +96,71 @@ class TaxpayerTest {
         assertEquals(singletaxp1.income , 10000000.5F);
         assertEquals(singletaxp1.fullname , "Avgoustinos Zigos");
     }
+
     @Test
-    void calculateBasicTaxTest(){
+    void createHeadOfHouseholdTaxpayerTest() throws WrongTaxpayerStatusException {
+
+        TaxpayerManager taxpayerManager = new TaxpayerManager();
+        taxpayerManager.createTaxpayer("Avgoustinos Zigos", 987654321, "Head of Household", 10000000.5F);
+
+        Taxpayer singletaxp1 =  taxpayerHashMap.get(987654321);
+
+        assertEquals(singletaxp1.taxRegistrationNumber , 987654321);
+        assertEquals(singletaxp1.income , 10000000.5F);
+        assertEquals(singletaxp1.fullname , "Avgoustinos Zigos");
+    }
+
+    @Test
+    void createMarriedFilingJointlyTaxpayerTest() throws WrongTaxpayerStatusException {
+
+        TaxpayerManager taxpayerManager = new TaxpayerManager();
+        taxpayerManager.createTaxpayer("Avgoustinos Zigos", 987654321, "Married Filing Jointly", 10000000.5F);
+
+        Taxpayer singletaxp1 =  taxpayerHashMap.get(987654321);
+
+        assertEquals(singletaxp1.taxRegistrationNumber , 987654321);
+        assertEquals(singletaxp1.income , 10000000.5F);
+        assertEquals(singletaxp1.fullname , "Avgoustinos Zigos");
+    }
+
+    @Test
+    void createMarriedFilingSeparatelyTaxpayerTest() throws WrongTaxpayerStatusException {
+
+        TaxpayerManager taxpayerManager = new TaxpayerManager();
+        taxpayerManager.createTaxpayer("Avgoustinos Zigos", 987654321, "Married Filing Separately", 10000000.5F);
+
+        Taxpayer singletaxp1 =  taxpayerHashMap.get(987654321);
+
+        assertEquals(singletaxp1.taxRegistrationNumber , 987654321);
+        assertEquals(singletaxp1.income , 10000000.5F);
+        assertEquals(singletaxp1.fullname , "Avgoustinos Zigos");
+    }
+
+    @Test
+    void calculateBasicTaxHeadOfHouseholdTaxpayerTest(){
 
         Taxpayer avgoustinos = new HeadOfHouseholdTaxpayer("Avgoustinos Zigos", 987654321, 100000);
         assertEquals(5828.38 + 0.0705 * (100000 - 90000) , avgoustinos.calculateBasicTax());
     }
 
+    @Test
+    void calculateBasicTaxMarriedFilingSeparatelyTaxpayerTest(){
+
+        Taxpayer avgoustinos = new MarriedFilingSeparatelyTaxpayer("Avgoustinos Zigos", 987654321, 100000);
+        assertEquals(6184.88 + 0.0785 * (100000 - 90000) , avgoustinos.calculateBasicTax());
+    }
+
+    @Test
+    void calculateBasicTaxMarriedFilingJointlyTaxpayerTest(){
+
+        Taxpayer avgoustinos = new MarriedFilingJointlyTaxpayer("Avgoustinos Zigos", 987654321, 100000);
+        assertEquals(5731.64 + 0.0705 * (100000 - 90000) , avgoustinos.calculateBasicTax());
+    }
+
+    @Test
+    void calculateBasicSingleTaxpayerTest(){
+
+        Taxpayer avgoustinos = new SingleTaxpayer("Avgoustinos Zigos", 987654321, 100000);
+        assertEquals(5996.80 + 0.0785 * (100000 - 90000) , avgoustinos.calculateBasicTax());
+    }
 }
