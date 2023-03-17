@@ -1,2 +1,2 @@
-Project for the class of Software Development 2, 2022-2023. 
-The goal is to refactor the given program IncomeTaxCalculator that has been developed by other students.
+This a project developed for the class of Software Development II @cse.uoi.gr, 2022-2023. 
+The goal was to refactor the given program of an Income Tax Calculator that has been developed by other students.
