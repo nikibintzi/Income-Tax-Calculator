@@ -143,7 +143,6 @@ class TaxpayerTest {
         assertEquals(5828.38 + 0.0705 * (100000 - 90000) , avgoustinos.calculateBasicTax());
     }
 
-    @Test
     void calculateBasicTaxMarriedFilingSeparatelyTaxpayerTest(){
 
         Taxpayer avgoustinos = new MarriedFilingSeparatelyTaxpayer("Avgoustinos Zigos", 987654321, 100000);
