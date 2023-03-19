@@ -46,7 +46,6 @@ public class GraphicalInterface extends JFrame {
 
   private JPanel contentPane;
   private TaxpayerManager taxpayerManager = new TaxpayerManager();
-  //private String taxpayersTRN = new String();
   private JTextField txtTaxRegistrationNumber;
   private JTextField filename = new JTextField();
   private JTextField dir = new JTextField();
@@ -103,9 +102,7 @@ public class GraphicalInterface extends JFrame {
     fileLoaderPanel.add(loadPanel, BorderLayout.CENTER);
     JCheckBox txtBox = new JCheckBox("Txt file");
     JCheckBox xmlBox = new JCheckBox("Xml file");
-    //
     JLabel l;
-    
 
     txtBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -136,7 +133,7 @@ public class GraphicalInterface extends JFrame {
     contentPane.add(taxRegisterNumberListScrollPane);
 
     JButton btnLoadTaxpayer = new JButton("Load Taxpayer");
-    //
+    
     l = new JLabel("no file selected");
     btnLoadTaxpayer.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
